@@ -14,3 +14,4 @@
 !/tmp/.keep
 mysql-data/
 .byebug_history
+.env
