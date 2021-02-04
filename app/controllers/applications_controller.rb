@@ -15,8 +15,8 @@ class ApplicationsController < ApplicationController
     begin
       application = decoded_token
       if application != nil
-        app_chats_count = $redis.get(Application.CHAT_COUNT_REDIS_KEY(application['app_name']))
-        app_name = application['app_name']
+        app_chats_count = $redis.get(Application.CHAT_COUNT_REDIS_KEY(application[:app_name]))
+        app_name = application[:app_name]
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
@@ -25,7 +25,7 @@ class ApplicationsController < ApplicationController
       render json: { error => exc.message }, status: 500
       return
     end
-    render json: { name: app_name, chats_count: app_chats_count }, status: 200
+    render json: { application: { name: app_name, chats_count: app_chats_count } }, status: 200
   end
 
   #POST   /applications --Create New Application {name}
@@ -34,7 +34,7 @@ class ApplicationsController < ApplicationController
     if @application.valid?
       token = encode_token({ app_name: @application.name })
       $redis.set(Application.CHAT_COUNT_REDIS_KEY(@application.name), 0)
-      ApplicationWorker.perform_async('create', application_params)
+      ApplicationWorker.perform_async('create', application_params.to_json)
       render json: { app_token: token }
     else
       render json: { error: "Invalid name" }
@@ -47,7 +47,8 @@ class ApplicationsController < ApplicationController
       application = decoded_token
       if application != nil
         token = encode_token({ app_name: application_params['app_name'] })
-        ApplicationWorker.perform_async('update', application_params)
+        change_redis_key_name(application[:app_name], application_params['app_name'])
+        ApplicationWorker.perform_async('update', application_params.to_json, application[:app_id])
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
@@ -59,6 +60,12 @@ class ApplicationsController < ApplicationController
   end
 
   private
+
+  def change_redis_key_name(old_name, new_name)
+    oldChatCount = $redis.get(Application.CHAT_COUNT_REDIS_KEY(old_name))
+    $redis.del(Application.CHAT_COUNT_REDIS_KEY(old_name))
+    $redis.set(Application.CHAT_COUNT_REDIS_KEY(new_name), oldChatCount)
+  end
 
   def application_params
     params.require(:application).permit(:name)

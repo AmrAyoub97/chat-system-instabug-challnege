@@ -1,13 +1,13 @@
 class ApplicationWorker
   include Sidekiq::Worker
 
-  def perform(action, payload)
-    puts payload
+  def perform(action, payload, old_app_id_to_be_updated = '')
+    payload = JSON.parse(payload)
     case action
     when 'create'
-      Application.create(payload[:application])
+      Application.create(payload)
     when 'update'
-      application = Application.find_by_name(payload['name'])
+      application = Application.find_by_id(old_app_id_to_be_updated)
       application.update(payload)
     else
       nil
