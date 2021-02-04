@@ -1,3 +1,4 @@
 class Application < ApplicationRecord
-  has_many :chats
+  has_many :chat
+  validates :name, presence: true, uniqueness: true
 end

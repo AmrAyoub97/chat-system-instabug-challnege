@@ -39,6 +39,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (8.0.0)
+    bcrypt (3.1.16)
     builder (3.2.4)
     byebug (11.1.3)
     concurrent-ruby (1.1.8)
@@ -71,6 +72,7 @@ GEM
     hashie (4.1.0)
     i18n (1.8.8)
       concurrent-ruby (~> 1.0)
+    jwt (2.2.2)
     loofah (2.9.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -92,6 +94,8 @@ GEM
     puma (3.12.6)
     racc (1.5.2)
     rack (2.2.3)
+    rack-cors (1.1.1)
+      rack (>= 2.0.0)
     rack-protection (2.1.0)
       rack
     rack-test (1.1.0)
@@ -149,11 +153,14 @@ PLATFORMS
   x64-mingw32
 
 DEPENDENCIES
+  bcrypt (~> 3.1.7)
   byebug
   dotenv-rails
   elasticsearch-model
+  jwt
   mysql2 (>= 0.3.18, < 0.6.0)
   puma (~> 3.7)
+  rack-cors
   rails (~> 5.1.7)
   redis (~> 4.0)
   sidekiq (~> 5.0, >= 5.0.5)
