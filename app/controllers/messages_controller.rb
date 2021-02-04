@@ -52,6 +52,8 @@ class MessagesController < ApplicationController
   end
 
   def search
+    query = request.query_parameters['query']
+    search_results = Message.search(query)
   end
 
   private

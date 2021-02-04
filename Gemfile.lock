@@ -129,6 +129,8 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (13.0.3)
     redis (4.1.4)
+    redis-namespace (1.8.0)
+      redis (>= 3.0.4)
     ruby2_keywords (0.0.4)
     ruby2ruby (2.4.4)
       ruby_parser (~> 3.1)
@@ -174,6 +176,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 5.1.7)
   redis (~> 4.0)
+  redis-namespace
   sidekiq (~> 5.0, >= 5.0.5)
   tzinfo-data
 

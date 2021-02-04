@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::API
 
   def encode_token(payload)
-    JWT.encode(payload,  ENV['JWT_SECRET'])
+    JWT.encode(payload, ENV['JWT_SECRET'])
   end
 
   def auth_header
@@ -15,8 +15,8 @@ class ApplicationController < ActionController::API
       begin
         decoded = JWT.decode(token, ENV['JWT_SECRET'], true, algorithm: 'HS256')
         app_name = decoded[0]['app_name']
-        application = Application.find(name: app_name)
-        return application.id
+        application = Application.find_by_name(app_name)
+        return { app_id: application.id, app_name: app_name }
       rescue JWT::DecodeError
         nil
       end

@@ -16,6 +16,8 @@ gem 'puma', '~> 3.7'
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
+gem 'redis-namespace'
+
 gem 'bcrypt', '~> 3.1.7'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
