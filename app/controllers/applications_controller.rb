@@ -11,10 +11,9 @@ class ApplicationsController < ApplicationController
 
   def index
     begin
-      token = decoded_token
-      if token != nil
-        app_name = token[0]['app_name']
-        @application = Application.find_by(name: app_name).as_json(:except => :id)
+      app_id = decoded_token
+      if app_id != nil
+        @application = Application.find(id: app_id).as_json(:except => :id)
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
@@ -38,10 +37,9 @@ class ApplicationsController < ApplicationController
 
   def update
     begin
-      app_name = decoded_token[0]['app_name']
-      @application = Application.find_by(name: app_name)
-      @application.update(application_params)
-
+      app_id = decoded_token
+      @application = Application.find_by(id: app_id)
+      @application.update(application_params).as_json(:except => :id)
     rescue Exception => exc
       return render json: { error => exc.message }, status: 500
     end
