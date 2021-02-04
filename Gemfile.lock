@@ -69,6 +69,10 @@ GEM
     faraday-net_http (1.0.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    hairtrigger (0.2.24)
+      activerecord (>= 5.0, < 7)
+      ruby2ruby (~> 2.4)
+      ruby_parser (~> 3.10)
     hashie (4.1.0)
     i18n (1.8.8)
       concurrent-ruby (~> 1.0)
@@ -126,6 +130,12 @@ GEM
     rake (13.0.3)
     redis (4.1.4)
     ruby2_keywords (0.0.4)
+    ruby2ruby (2.4.4)
+      ruby_parser (~> 3.1)
+      sexp_processor (~> 4.6)
+    ruby_parser (3.15.1)
+      sexp_processor (~> 4.9)
+    sexp_processor (4.15.2)
     sidekiq (5.2.9)
       connection_pool (~> 2.2, >= 2.2.2)
       rack (~> 2.0)
@@ -157,6 +167,7 @@ DEPENDENCIES
   byebug
   dotenv-rails
   elasticsearch-model
+  hairtrigger
   jwt
   mysql2 (>= 0.3.18, < 0.6.0)
   puma (~> 3.7)
