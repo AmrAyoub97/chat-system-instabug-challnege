@@ -1,4 +1,3 @@
-# Dockerfile.rails
 FROM ruby:2.6
 
 RUN apt-get update && \
@@ -15,8 +14,7 @@ ADD Gemfile $APP_ROOT/Gemfile
 ADD Gemfile.lock $APP_ROOT/Gemfile.lock
 RUN bundle update --bundler
 RUN bundle install
-RUN bundle exec sidekiq
 ADD . $APP_ROOT
 
 EXPOSE  3000
-CMD rails db:migrate:reset &&rails db:seed && rm -f tmp/pids/server.pid && rails s -p 3000 -b '0.0.0.0'
+CMD rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0' && rails db:migrate:reset && rails db:seed && bundle exec sidekiq
