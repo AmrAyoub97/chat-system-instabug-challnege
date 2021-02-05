@@ -2,9 +2,9 @@ class ChatsController < ApplicationController
 
   def show
     begin
-      app_id = decoded_token
-      if app_id != nil
-        @chats = Chat.find(application_id: app_id, chat_number: params[:id]).as_json(:except => :id)
+      application = decoded_token
+      if application != nil
+        @chats = Chat.find(application_id: application[:app_id], chat_number: params[:id]).as_json(:except => :id)
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
@@ -18,9 +18,9 @@ class ChatsController < ApplicationController
 
   def index
     begin
-      app_id = decoded_token
-      if app_id != nil
-        @chats = Chat.find(application_id: app_id).as_json(:except => :id)
+      application = decoded_token
+      if application != nil
+        @chats = Application.find_by(id: application[:app_id]).chats.as_json(:except => :id)
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
@@ -34,12 +34,10 @@ class ChatsController < ApplicationController
 
   def create
     begin
-      app_id = decoded_token
-      if app_id != nil
-        @application = Application.find(application_id: app_id)
-        @application.chats_count += 1
-        chat_number = @application.chats_count
-        Chat.create(chat_number:chat_number,application_id: app_id)
+      application = decoded_token
+      if application != nil
+        chat_number = $redis.incr(Application.CHAT_COUNT_REDIS_KEY(application[:app_name]))
+        ChatWorker.perform_async(chat_number, application[:app_id])
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
@@ -48,5 +46,6 @@ class ChatsController < ApplicationController
       render json: { error => exc.message }, status: 500
       return
     end
-    render json: { chat_number:chat_number }, status: 200  end
+    render json: { chat_number: chat_number }, status: 200
+  end
 end

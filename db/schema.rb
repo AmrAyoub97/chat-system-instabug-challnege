@@ -10,19 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210203222210) do
+ActiveRecord::Schema.define(version: 20210205010550) do
 
   create_table "applications", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "token"
     t.string "name"
-    t.integer "chat_count"
+    t.integer "chat_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "chats", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "chat_number"
-    t.integer "messages_count"
+    t.integer "messages_count", default: 0
     t.bigint "application_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -43,4 +42,16 @@ ActiveRecord::Schema.define(version: 20210203222210) do
   add_foreign_key "chats", "applications"
   add_foreign_key "messages", "applications"
   add_foreign_key "messages", "chats"
+  create_trigger("chats_after_insert_row_tr", :generated => true, :compatibility => 1).
+      on("chats").
+      after(:insert) do
+    "UPDATE applications SET chat_count = chat_count + 1 WHERE id = NEW.application_id;"
+  end
+
+  create_trigger("messages_after_insert_row_tr", :generated => true, :compatibility => 1).
+      on("messages").
+      after(:insert) do
+    "UPDATE chats SET messages_count = messages_count + 1 WHERE id = NEW.chat_id;"
+  end
+
 end

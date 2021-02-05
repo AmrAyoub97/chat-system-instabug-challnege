@@ -1,5 +1,6 @@
 class ApplicationsController < ApplicationController
 
+  #GET   /applications/list --Return List Of All Applications
   def list_applications
     begin
       @applications = Application.all.as_json(:except => :id)
@@ -9,11 +10,13 @@ class ApplicationsController < ApplicationController
     render json: @applications, status: 200
   end
 
+  #GET   /applications --Return An Application {name, chats_count}
   def index
     begin
-      app_id = decoded_token
-      if app_id != nil
-        @application = Application.find(id: app_id).as_json(:except => :id)
+      application = decoded_token
+      if application != nil
+        app_chats_count = $redis.get(Application.CHAT_COUNT_REDIS_KEY(application[:app_name]))
+        app_name = application[:app_name]
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
@@ -22,33 +25,49 @@ class ApplicationsController < ApplicationController
       render json: { error => exc.message }, status: 500
       return
     end
-    render json: @application, status: 200
+    render json: { application: { name: app_name, chats_count: app_chats_count } }, status: 200
   end
 
+  #POST   /applications --Create New Application {name}
   def create
-    @application = Application.create(application_params)
+    @application = Application.new(application_params)
     if @application.valid?
-      token = encode_token({ app_id: @application.id, app_name: @application.name })
+      token = encode_token({ app_name: @application.name })
+      $redis.set(Application.CHAT_COUNT_REDIS_KEY(@application.name), 0)
+      ApplicationWorker.perform_async('create', application_params.to_json)
       render json: { app_token: token }
     else
       render json: { error: "Invalid name" }
     end
   end
 
+  #PUT   /applications --Update Existing Application {name}
   def update
     begin
-      app_id = decoded_token
-      @application = Application.find_by(id: app_id)
-      @application.update(application_params).as_json(:except => :id)
+      application = decoded_token
+      if application != nil
+        token = encode_token({ app_name: application_params['name'] })
+        change_redis_key_name(application[:app_name], application_params['name'])
+        ApplicationWorker.perform_async('update', application_params.to_json, application[:app_id])
+      else
+        render json: { error: 'Invalid Token' }, status: 403
+        return
+      end
     rescue Exception => exc
       return render json: { error => exc.message }, status: 500
     end
-    render json: @application, status: 200
+    render json: { app_token: token }, status: 200
   end
 
   private
 
+  def change_redis_key_name(old_name, new_name)
+    old_chat_count = $redis.get(Application.CHAT_COUNT_REDIS_KEY(old_name))
+    $redis.del(Application.CHAT_COUNT_REDIS_KEY(old_name))
+    $redis.set(Application.CHAT_COUNT_REDIS_KEY(new_name), old_chat_count)
+  end
+
   def application_params
-    params.permit(:name)
+    params.require(:application).permit(:name)
   end
 end

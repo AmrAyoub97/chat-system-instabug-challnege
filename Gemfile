@@ -16,20 +16,23 @@ gem 'puma', '~> 3.7'
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
-# Use ActiveModel has_secure_password
-gem 'bcrypt', '~> 3.1.7'
+gem 'redis-namespace'
 
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
+gem 'bcrypt', '~> 3.1.7'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
+#gem for .env file
 gem 'dotenv-rails'
+#sidekiq for background processes
 gem 'sidekiq', '~> 5.0', '>= 5.0.5'
 #elesticsearch gem
 gem 'elasticsearch-model'
 #JWT gem
 gem 'jwt'
+#gem HairTrigger lets you create and manage database triggers
+gem 'hairtrigger'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
