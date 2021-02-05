@@ -30,11 +30,11 @@ Create, Update and Read (applications, chats, messages), through the endpoints.
 5. From CMD run ```docker-compose up -d```
     5.1 This will pull the needed images and run them in docker containers
 
-### Docker Container Used
--MySQL
--Redis
--Elasticsearch
--Rails App
+### Docker Containers Used
+* MySQL
+* Redis
+* Elasticsearch
+* Rails App
 
 ### API Description
 | Action | Endpoint URL | Verb | Request Header | Request Body | Response |
