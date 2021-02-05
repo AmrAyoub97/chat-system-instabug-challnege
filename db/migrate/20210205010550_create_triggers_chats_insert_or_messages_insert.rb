@@ -13,7 +13,7 @@ class CreateTriggersChatsInsertOrMessagesInsert < ActiveRecord::Migration[5.1]
     create_trigger("messages_after_insert_row_tr", :generated => true, :compatibility => 1).
         on("messages").
         after(:insert) do
-      "UPDATE chats SET message_count = message_count + 1 WHERE id = NEW.chat_id;"
+      "UPDATE chats SET messages_count = messages_count + 1 WHERE id = NEW.chat_id;"
     end
   end
 

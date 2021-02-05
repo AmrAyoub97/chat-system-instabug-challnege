@@ -46,8 +46,8 @@ class ApplicationsController < ApplicationController
     begin
       application = decoded_token
       if application != nil
-        token = encode_token({ app_name: application_params['app_name'] })
-        change_redis_key_name(application[:app_name], application_params['app_name'])
+        token = encode_token({ app_name: application_params['name'] })
+        change_redis_key_name(application[:app_name], application_params['name'])
         ApplicationWorker.perform_async('update', application_params.to_json, application[:app_id])
       else
         render json: { error: 'Invalid Token' }, status: 403
@@ -62,9 +62,9 @@ class ApplicationsController < ApplicationController
   private
 
   def change_redis_key_name(old_name, new_name)
-    oldChatCount = $redis.get(Application.CHAT_COUNT_REDIS_KEY(old_name))
+    old_chat_count = $redis.get(Application.CHAT_COUNT_REDIS_KEY(old_name))
     $redis.del(Application.CHAT_COUNT_REDIS_KEY(old_name))
-    $redis.set(Application.CHAT_COUNT_REDIS_KEY(new_name), oldChatCount)
+    $redis.set(Application.CHAT_COUNT_REDIS_KEY(new_name), old_chat_count)
   end
 
   def application_params

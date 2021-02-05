@@ -20,7 +20,7 @@ class ChatsController < ApplicationController
     begin
       application = decoded_token
       if application != nil
-        @chats = Application.find_by(id: application['app_id']).chats.as_json(:except => :id)
+        @chats = Application.find_by(id: application[:app_id]).chats.as_json(:except => :id)
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
@@ -37,7 +37,7 @@ class ChatsController < ApplicationController
       application = decoded_token
       if application != nil
         chat_number = $redis.incr(Application.CHAT_COUNT_REDIS_KEY(application[:app_name]))
-        ChatWorker.perform_async(chat_number: chat_number, application_id: application[:app_id])
+        ChatWorker.perform_async(chat_number, application[:app_id])
       else
         render json: { error: 'Invalid Token' }, status: 403
         return

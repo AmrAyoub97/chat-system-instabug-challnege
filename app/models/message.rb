@@ -4,7 +4,7 @@ class Message < ApplicationRecord
 
   belongs_to :chat
   trigger.after(:insert) do
-    "UPDATE chats SET message_count = message_count + 1 WHERE id = NEW.chat_id;"
+    "UPDATE chats SET messages_count = messages_count + 1 WHERE id = NEW.chat_id;"
   end
 
   settings do
@@ -18,7 +18,6 @@ class Message < ApplicationRecord
   def self.search(query)
     __elasticsearch__.search(
       {
-        size: 20,
         query: {
           query: query,
           fields: %w[body]
