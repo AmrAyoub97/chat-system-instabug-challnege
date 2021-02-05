@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get '/applications/list', to: 'applications#list_applications'
   resources :applications, controller: "applications", only: [:index, :create]
   resources :chats, controller: "chats", only: [:index, :create, :show] do
-    resources :messages, controller: "messages", only: [:index, :create, :update, :show]
+    resources :messages, controller: "messages", only: [:index, :create, :show]
   end
   get '/search', to: 'messages#search'
 end

@@ -57,13 +57,16 @@ class MessagesController < ApplicationController
   def search
     begin
       application = decoded_token
-      if request.query_parameters['query'] == nil
+      if request.query_parameters['query'] == nil || request.query_parameters['chat_number'] == nil
         render json: { error: 'Missing Query Params' }, status: 403
         return
       end
       if application != nil
+        application_id = application[:app_id]
+        chat_number = request.query_parameters['chat_number']
+        chat_id = Chat.find_by(application_id: application_id, chat_number: chat_number)
         query = request.query_parameters['query']
-        search_results = Application.find(application_id).messages.search(query)
+        search_results = Message.where('application_id=? AND chat_id=?', application_id, chat_id).search(query)
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
