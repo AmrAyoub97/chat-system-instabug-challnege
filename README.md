@@ -19,7 +19,7 @@ Create, Update and Read (applications, chats, messages), through the endpoints.
 
 ### Requirments
 * [Docker](https://www.docker.com/)
-* API test Tool, ex:([Postman](https://www.postman.com/))
+* API Test Tool, ex:([Postman](https://www.postman.com/))
 
 ### Installation
 1. make sure that ```docker``` and ```docker-compose``` are installed on your machine.
