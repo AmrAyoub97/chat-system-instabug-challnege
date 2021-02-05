@@ -5,8 +5,7 @@ class ApplicationController < ActionController::API
   end
 
   def auth_header
-    # { X-Application-Token: 'Bearer <token>' }
-    request.headers['X-Application-Token']
+    request.headers['x-app-token']
   end
 
   def decoded_token
