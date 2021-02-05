@@ -10,7 +10,7 @@ class Message < ApplicationRecord
   settings do
     mappings dynamic: false do
       indexes :message_number, type: :long
-      indexes :chat_id, type: :long
+      indexes :chat_number, type: :long
       indexes :body, type: :text, analyzer: 'english'
     end
   end
@@ -19,14 +19,13 @@ class Message < ApplicationRecord
     __elasticsearch__.search(
       {
         query: {
-          query: query,
-          fields: %w[body]
+          query_string: {
+            query: '*' + query.to_s + '*',
+            fields: ['body']
+          }
         }
       }
     )
   end
 
-  def as_indexed_json(options = nil)
-    self.as_json( only: [ :message_number, :chat_id, :body ] )
-  end
 end
