@@ -18,8 +18,8 @@ The token is the identifier that devices use to send chats to that application.
 Create, Update and Read (applications, chats, messages), through the endpoints.
 
 ### Requirments
-* Docker
-* API test Tool, ex:(Postman)
+* [Docker](https://www.docker.com/)
+* API test Tool, ex:([Postman](https://www.postman.com/))
 
 ### Installation
 1. make sure that ```docker``` and ```docker-compose``` are installed on your machine.
