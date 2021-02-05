@@ -32,9 +32,9 @@ class ApplicationsController < ApplicationController
   def create
     @application = Application.new(application_params)
     if @application.valid?
-      token = encode_token({ app_name: @application.name })
+      Application.create(application_params)
       $redis.set(Application.CHAT_COUNT_REDIS_KEY(@application.name), 0)
-      ApplicationWorker.perform_async('create', application_params.to_json)
+      token = encode_token({ app_name: @application.name })
       render json: { app_token: token }
     else
       render json: { error: "Invalid name" }
@@ -46,9 +46,10 @@ class ApplicationsController < ApplicationController
     begin
       application = decoded_token
       if application != nil
-        token = encode_token({ app_name: application_params['name'] })
         change_redis_key_name(application[:app_name], application_params['name'])
-        ApplicationWorker.perform_async('update', application_params.to_json, application[:app_id])
+        application = Application.find_by_id(application[:app_id])
+        application.update(application_params)
+        token = encode_token({ app_name: application_params['name'] })
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
