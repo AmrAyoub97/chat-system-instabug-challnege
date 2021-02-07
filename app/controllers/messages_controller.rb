@@ -40,6 +40,7 @@ class MessagesController < ApplicationController
       application = decoded_token
       if application != nil
         chat_number = params[:chat_id]
+        debugger
         chat_id = Chat.find_by(application_id: application[:app_id], chat_number: chat_number).id
         message_number = $redis.incr(Chat.MESSAGE_COUNT_REDIS_KEY(application[:app_name], chat_number))
         MessageWorker.perform_async(message_params['body'], message_number, chat_id, application[:app_id])
@@ -66,7 +67,7 @@ class MessagesController < ApplicationController
         chat_number = request.query_parameters['chat_number']
         chat_id = Chat.find_by(application_id: application_id, chat_number: chat_number)
         query = request.query_parameters['query']
-        search_results = Message.where('application_id=? AND chat_id=?', application_id, chat_id).search(query)
+        search_results = Message.where('application_id=? AND chat_id=?', application_id, chat_id).search(query).as_json( :except=>[:_id,:id,:_index,:_type,:_score,:chat_id,:application_id])
       else
         render json: { error: 'Invalid Token' }, status: 403
         return
@@ -75,7 +76,7 @@ class MessagesController < ApplicationController
       render json: { error => exc.message }, status: 500
       return
     end
-    render json: { results: search_results }, status: 200
+    render json: { results: search_results}, status: 200
   end
 
   private
