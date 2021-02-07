@@ -34,6 +34,7 @@ Create, Update and Read (applications, chats, messages), through the endpoints.
 3. Open repo root folder ``` cd chat-system-instabug-challnege```
 4. From CMD run ```docker-compose build```, This will build an image for our rails app.
 5. From CMD run ```docker-compose up -d```, This will pull the required images and run them in docker containers.
+6. You have to Insert required data especially ```Application``` in order to get app_token so you can use the endpoints.
 
 ### Docker Containers Used
 * MySQL
